@@ -133,14 +133,11 @@ export default function AdminUsersPage() {
             <SelectItem key="admin">Admin</SelectItem>
           </Select>
         </div>
-        <Button
-          size="sm"
-          color="secondary"
-          className="font-medium text-xs"
-          onClick={handleCreateUser}
-        >
-          Зарегистрировать
-        </Button>
+        <div className="flex justify-end">
+          <Button size="sm" color="secondary" className="font-medium text-xs">
+            Зарегистрировать
+          </Button>
+        </div>
       </div>
 
       <Table

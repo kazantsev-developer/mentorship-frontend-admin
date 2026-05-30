@@ -1030,6 +1030,12 @@ video {
 .h-screen {
   height: 100vh;
 }
+.h-\[42px\] {
+  height: 42px;
+}
+.h-\[38px\] {
+  height: 38px;
+}
 .max-h-\[20rem\] {
   max-height: 20rem;
 }
@@ -1248,6 +1254,9 @@ video {
 .min-w-\[200px\] {
   min-width: 200px;
 }
+.min-w-\[40px\] {
+  min-width: 40px;
+}
 .min-w-full {
   min-width: 100%;
 }
@@ -1258,6 +1267,9 @@ video {
 .min-w-min {
   min-width: -moz-min-content;
   min-width: min-content;
+}
+.min-w-\[48px\] {
+  min-width: 48px;
 }
 .max-w-2xl {
   max-width: 42rem;
@@ -2133,6 +2145,10 @@ video {
 .bg-blue-500\/10 {
   background-color: rgb(59 130 246 / 0.1);
 }
+.bg-blue-600 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(37 99 235 / var(--tw-bg-opacity, 1));
+}
 .bg-brand-primary\/10 {
   background-color: rgb(59 130 246 / 0.1);
 }
@@ -2345,11 +2361,6 @@ video {
   --tw-gradient-to: rgb(0 0 0 / 0) var(--tw-gradient-to-position);
   --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
 }
-.from-primary-50 {
-  --tw-gradient-from: #eff6ff var(--tw-gradient-from-position);
-  --tw-gradient-to: rgb(239 246 255 / 0) var(--tw-gradient-to-position);
-  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
-}
 .via-transparent {
   --tw-gradient-to: rgb(0 0 0 / 0)  var(--tw-gradient-to-position);
   --tw-gradient-stops: var(--tw-gradient-from), transparent var(--tw-gradient-via-position), var(--tw-gradient-to);
@@ -2374,9 +2385,6 @@ video {
 }
 .to-white {
   --tw-gradient-to: #fff var(--tw-gradient-to-position);
-}
-.to-default-100 {
-  --tw-gradient-to: #f3f4f6 var(--tw-gradient-to-position);
 }
 .bg-stripe-size {
   background-size: 1.25rem 1.25rem;
@@ -4897,6 +4905,11 @@ select:focus {
   background-color: rgb(243 244 246 / var(--tw-bg-opacity, 1));
 }
 
+.focus\:border-brand-purple:focus {
+  --tw-border-opacity: 1;
+  border-color: rgb(139 92 246 / var(--tw-border-opacity, 1));
+}
+
 .focus\:bg-danger-400\/50:focus {
   background-color: hsl(var(--heroui-danger-400) / 0.5);
 }
@@ -4923,6 +4936,11 @@ select:focus {
 
 .focus\:underline:focus {
   text-decoration-line: underline;
+}
+
+.focus\:outline-none:focus {
+  outline: 2px solid transparent;
+  outline-offset: 2px;
 }
 
 .focus-visible\:z-10:focus-visible {

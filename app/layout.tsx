@@ -2,6 +2,7 @@ import "@/styles/globals.css";
 import { fontSans } from "@/config/fonts";
 import clsx from "clsx";
 import { Providers } from "./providers";
+
 export default function RootLayout({
   children,
 }: {
@@ -9,13 +10,8 @@ export default function RootLayout({
 }) {
   return (
     <html lang="ru" suppressHydrationWarning>
-      <body
-        className={clsx(
-          "min-h-screen bg-background font-sans antialiased",
-          fontSans.variable,
-        )}
-      >
-        <Providers> {children}</Providers>
+      <body className={clsx("font-sans antialiased", fontSans.variable)}>
+        <Providers>{children}</Providers>
       </body>
     </html>
   );

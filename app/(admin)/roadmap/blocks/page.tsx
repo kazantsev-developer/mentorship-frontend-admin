@@ -107,14 +107,16 @@ export default function AdminRoadmapBlocksPage() {
               onChange={(e) => setSortOrder(e.target.value)}
             />
           </div>
-          <Button
-            size="sm"
-            color="secondary"
-            className="font-medium text-xs"
-            onClick={handleCreateBlock}
-          >
-            Создать блок
-          </Button>
+          <div className="flex justify-end">
+            <Button
+              size="sm"
+              color="secondary"
+              className="font-medium text-xs"
+              onClick={handleCreateBlock}
+            >
+              Создать блок
+            </Button>
+          </div>
         </CardBody>
       </Card>
 

@@ -90,8 +90,7 @@ export default function AdminLoginPage() {
             }
           />
           <Button
-            className="w-full"
-            color="primary"
+            className="w-full bg-blue-600 text-white"
             type="submit"
             isLoading={loading}
           >

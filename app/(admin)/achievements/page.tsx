@@ -13,10 +13,21 @@ import {
   Chip,
   Card,
   CardBody,
+  Select,
+  SelectItem,
 } from "@heroui/react";
 import { Icon } from "@iconify/react";
 import { toast } from "sonner";
 import { Achievement } from "@/types";
+
+const WORKING_ICONS = [
+  { id: "mdi:star", name: "Звезда (MDI)" },
+  { id: "mdi:star-outline", name: "Звезда контур" },
+  { id: "material-symbols:star", name: "Звезда (Material)" },
+  { id: "ic:baseline-star", name: "Звезда (Google)" },
+  { id: "fa6-solid:star", name: "Звезда (FA6)" },
+  { id: "ph:star-fill", name: "Звезда (Phosphor)" },
+];
 
 export default function AdminAchievementsPage() {
   const [achievements, setAchievements] = useState<Achievement[]>([]);
@@ -74,11 +85,13 @@ export default function AdminAchievementsPage() {
   return (
     <div className="space-y-6 max-w-6xl mx-auto">
       <Card className="bg-surface border border-border-subtle shadow-none rounded-xl">
-        <CardBody className="p-5 space-y-4">
-          <h3 className="text-sm font-semibold text-brand-purple flex items-center gap-2">
-            <Icon icon="lucide:sparkles" /> Новое достижение
+        <CardBody className="p-6">
+          <h3 className="text-sm font-semibold text-brand-purple flex items-center gap-2 mb-4">
+            <Icon icon="mdi:star" className="w-4 h-4 text-brand-purple" />
+            Новое достижение
           </h3>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
+
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <Input
               size="sm"
               label="Название"
@@ -102,26 +115,31 @@ export default function AdminAchievementsPage() {
               onChange={(e) => setBonus(e.target.value)}
             />
             <div className="flex gap-2 items-end">
-              <Input
+              <Select
                 size="sm"
-                label="Иконка (Iconify ID)"
+                label="Иконка"
                 variant="bordered"
-                value={imgUrl}
-                onChange={(e) => setImgUrl(e.target.value)}
-              />
-              <div className="p-2 rounded-lg bg-default-100">
-                <Icon icon={imgUrl} className="w-6 h-6" />
+                selectedKeys={[imgUrl]}
+                onSelectionChange={(keys) => {
+                  const selected = Array.from(keys)[0] as string;
+                  if (selected) setImgUrl(selected);
+                }}
+              >
+                {WORKING_ICONS.map((icon) => (
+                  <SelectItem key={icon.id}>{icon.name}</SelectItem>
+                ))}
+              </Select>
+              <div className="p-2 rounded-lg bg-brand-purple/10 flex items-center justify-center min-w-[40px] h-[38px]">
+                <Icon icon={imgUrl} className="w-5 h-5 text-brand-purple" />
               </div>
             </div>
           </div>
-          <Button
-            size="sm"
-            color="secondary"
-            className="font-medium text-xs"
-            onClick={handleCreate}
-          >
-            Добавить достижение
-          </Button>
+
+          <div className="mt-4 flex justify-end">
+            <Button size="sm" color="secondary" className="font-medium text-xs">
+              Добавить достижение
+            </Button>
+          </div>
         </CardBody>
       </Card>
 
@@ -140,10 +158,11 @@ export default function AdminAchievementsPage() {
               className="border-b border-border-subtle/40 last:border-none"
             >
               <TableCell>
-                <div
-                  className={`p-2 rounded-full w-fit ${ach.is_active ? "bg-brand-purple/10 text-brand-purple" : "bg-canvas text-text-muted"}`}
-                >
-                  <Icon icon={ach.image_url} className="w-5 h-5" />
+                <div className="w-8 h-8 rounded-full flex items-center justify-center bg-brand-purple/10">
+                  <Icon
+                    icon={ach.image_url}
+                    className="w-4 h-4 text-brand-purple"
+                  />
                 </div>
               </TableCell>
               <TableCell className="text-sm font-medium">{ach.title}</TableCell>

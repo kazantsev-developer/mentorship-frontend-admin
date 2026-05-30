@@ -178,14 +178,16 @@ export default function AdminRoadmapMaterialsPage() {
                 onChange={(e) => setIsRequired(e.target.checked)}
               />
             </div>
-            <Button
-              size="sm"
-              color="secondary"
-              className="font-medium text-xs"
-              onClick={handleCreateMaterial}
-            >
-              Добавить материал
-            </Button>
+            <div className="flex justify-end">
+              <Button
+                size="sm"
+                color="secondary"
+                className="font-medium text-xs"
+                onClick={handleCreateMaterial}
+              >
+                Добавить материал
+              </Button>
+            </div>
           </div>
         </CardBody>
       </Card>

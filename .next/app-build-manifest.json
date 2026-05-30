@@ -1,5 +1,16 @@
 {
   "pages": {
+    "/(admin)/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/(admin)/page.js"
+    ],
+    "/(admin)/layout": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/css/app/(admin)/layout.css",
+      "static/chunks/app/(admin)/layout.js"
+    ],
     "/layout": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
@@ -11,36 +22,30 @@
       "static/chunks/main-app.js",
       "static/chunks/app/(admin)/dashboard/page.js"
     ],
-    "/(admin)/layout": [
+    "/(admin)/achievements/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/css/app/(admin)/layout.css",
-      "static/chunks/app/(admin)/layout.js"
-    ],
-    "/(admin)/users/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/(admin)/users/page.js"
-    ],
-    "/(admin)/roadmap/blocks/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/(admin)/roadmap/blocks/page.js"
+      "static/chunks/app/(admin)/achievements/page.js"
     ],
     "/(admin)/roadmap/materials/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
       "static/chunks/app/(admin)/roadmap/materials/page.js"
     ],
-    "/(admin)/achievements/page": [
+    "/(admin)/roadmap/blocks/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/(admin)/achievements/page.js"
+      "static/chunks/app/(admin)/roadmap/blocks/page.js"
     ],
-    "/login/page": [
+    "/(admin)/users/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/login/page.js"
+      "static/chunks/app/(admin)/users/page.js"
+    ],
+    "/(admin)/one-on-one/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/(admin)/one-on-one/page.js"
     ]
   }
 }

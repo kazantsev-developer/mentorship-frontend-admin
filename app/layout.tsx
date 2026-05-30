@@ -1,7 +1,7 @@
 import "@/styles/globals.css";
 import { fontSans } from "@/config/fonts";
 import clsx from "clsx";
-
+import { Providers } from "./providers";
 export default function RootLayout({
   children,
 }: {
@@ -15,7 +15,7 @@ export default function RootLayout({
           fontSans.variable,
         )}
       >
-        {children}
+        <Providers> {children}</Providers>
       </body>
     </html>
   );

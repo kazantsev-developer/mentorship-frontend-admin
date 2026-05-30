@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { api } from "@/components/api";
 import { Card, CardBody, Spinner } from "@heroui/react";
 import { Icon } from "@iconify/react";
+import { toast } from "sonner";
 
 interface DashboardStats {
   total_users: number;
@@ -20,14 +21,9 @@ export default function AdminDashboardPage() {
     api
       .get<DashboardStats>("/api/admin/stats")
       .then(setStats)
-      .catch(() => {
-        setStats({
-          total_users: 24,
-          students_count: 18,
-          buddies_count: 5,
-          active_one_on_one: 3,
-          total_achievements_issued: 42,
-        });
+      .catch((err) => {
+        toast.error(err.message || "Не удалось загрузить статистику");
+        setStats(null);
       })
       .finally(() => setLoading(false));
   }, []);
@@ -42,38 +38,42 @@ export default function AdminDashboardPage() {
     );
   }
 
+  if (!stats) {
+    return <div className="text-center py-8 text-text-muted">Нет данных</div>;
+  }
+
   const cards = [
     {
       title: "Пользователи",
-      val: stats?.total_users,
+      val: stats.total_users,
       icon: "lucide:users",
       color: "text-blue-500",
       bg: "bg-blue-500/10",
     },
     {
       title: "Студенты",
-      val: stats?.students_count,
+      val: stats.students_count,
       icon: "lucide:graduation-cap",
       color: "text-emerald-500",
       bg: "bg-emerald-500/10",
     },
     {
       title: "Наставники",
-      val: stats?.buddies_count,
+      val: stats.buddies_count,
       icon: "lucide:shield-check",
       color: "text-amber-500",
       bg: "bg-amber-500/10",
     },
     {
       title: "Заявки 1x1",
-      val: stats?.active_one_on_one,
+      val: stats.active_one_on_one,
       icon: "lucide:clock",
       color: "text-rose-500",
       bg: "bg-rose-500/10",
     },
     {
       title: "Выдано наград",
-      val: stats?.total_achievements_issued,
+      val: stats.total_achievements_issued,
       icon: "lucide:sparkles",
       color: "text-purple-500",
       bg: "bg-purple-500/10",
@@ -102,20 +102,6 @@ export default function AdminDashboardPage() {
           </Card>
         ))}
       </div>
-      <Card className="bg-surface border border-border-subtle shadow-none rounded-xl">
-        <CardBody className="p-5 space-y-2">
-          <h3 className="text-sm font-semibold text-text-main flex items-center gap-2">
-            <Icon icon="lucide:terminal" className="text-brand-purple" />{" "}
-            Информация для проверки
-          </h3>
-          <p className="text-sm text-text-muted leading-relaxed">
-            Административная панель взаимодействует с бэкендом платформы. Меню
-            слева предоставляет доступ к CRUD-интерфейсам управления
-            пользователями, блоками и материалами Roadmap, достижениями и
-            заявками 1x1.
-          </p>
-        </CardBody>
-      </Card>
     </div>
   );
 }

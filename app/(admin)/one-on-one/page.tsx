@@ -24,24 +24,8 @@ export default function AdminOneOnOnePage() {
       const data = await api.get<OneOnOneRequest[]>("/api/admin/one-on-one");
       setRequests(data || []);
     } catch {
-      setRequests([
-        {
-          id: "1",
-          student_id: "s1",
-          student_name: "Влад Сидоров",
-          student_bonus: 1250,
-          status: "pending",
-          created_at: new Date().toISOString(),
-        },
-        {
-          id: "2",
-          student_id: "s2",
-          student_name: "Дима Ким",
-          student_bonus: 450,
-          status: "pending",
-          created_at: new Date().toISOString(),
-        },
-      ]);
+      toast.error("Не удалось загрузить заявки");
+      setRequests([]);
     } finally {
       setLoading(false);
     }

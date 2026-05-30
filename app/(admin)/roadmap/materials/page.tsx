@@ -38,39 +38,15 @@ export default function AdminRoadmapMaterialsPage() {
   const loadData = async () => {
     try {
       const [materialsData, blocksData] = await Promise.all([
-        api.get<RoadmapMaterial[]>("/api/admin/roadmap/materials"),
-        api.get<RoadmapBlock[]>("/api/admin/roadmap/blocks"),
+        api.get<RoadmapMaterial[]>("/api/admin/materials"),
+        api.get<RoadmapBlock[]>("/api/admin/blocks"),
       ]);
       setMaterials(materialsData || []);
       setBlocks(blocksData || []);
     } catch {
-      setBlocks([
-        { id: "b1", title: "Знакомство с Go", sort_order: 1, is_active: true },
-        { id: "b2", title: "Структуры данных", sort_order: 2, is_active: true },
-      ]);
-      setMaterials([
-        {
-          id: "m1",
-          block_id: "b1",
-          title: "Введение в Go",
-          type: "theory",
-          content_type: "url",
-          url: "https://go.dev",
-          is_required: true,
-          is_active: true,
-          sort_order: 1,
-        },
-        {
-          id: "m2",
-          block_id: "b1",
-          title: "Написать калькулятор",
-          type: "practice",
-          content_type: "text",
-          is_required: true,
-          is_active: true,
-          sort_order: 2,
-        },
-      ]);
+      toast.error("Не удалось загрузить данные");
+      setMaterials([]);
+      setBlocks([]);
     } finally {
       setLoading(false);
     }
@@ -86,7 +62,7 @@ export default function AdminRoadmapMaterialsPage() {
       return;
     }
     try {
-      await api.post("/api/admin/roadmap/materials", {
+      await api.post("/api/admin/materials", {
         block_id: selectedBlockId,
         title,
         description: description || undefined,
@@ -110,7 +86,7 @@ export default function AdminRoadmapMaterialsPage() {
 
   const handleToggleActive = async (id: string, currentStatus: boolean) => {
     try {
-      await api.put(`/api/admin/roadmap/materials/${id}/status`, {
+      await api.patch(`/api/admin/materials/${id}/status`, {
         is_active: !currentStatus,
       });
       toast.success("Статус изменён");
@@ -140,15 +116,6 @@ export default function AdminRoadmapMaterialsPage() {
 
   return (
     <div className="space-y-6 max-w-7xl mx-auto">
-      <div>
-        <h2 className="text-xl font-semibold text-text-main">
-          Управление материалами
-        </h2>
-        <p className="text-sm text-text-muted mt-1">
-          Добавление карточек теории, практики, вопросов, домашки
-        </p>
-      </div>
-
       <Card className="bg-surface border border-border-subtle shadow-none rounded-xl">
         <CardBody className="p-5 space-y-4">
           <h3 className="text-sm font-semibold text-brand-purple flex items-center gap-2">

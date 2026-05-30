@@ -33,26 +33,9 @@ export default function AdminUsersPage() {
     try {
       const data = await api.get<User[]>("/api/admin/users");
       setUsers(data || []);
-    } catch {
-      setUsers([
-        {
-          id: "1",
-          login: "go_student_1",
-          display_name: "Игорь Попов",
-          telegram_username: "@igo_go",
-          roles: ["student"],
-          is_deleted: false,
-          learning_started_at: "2026-02-10T12:00:00Z",
-        },
-        {
-          id: "2",
-          login: "go_buddy_expert",
-          display_name: "Артур Наставник",
-          telegram_username: "@art_buddy",
-          roles: ["buddy"],
-          is_deleted: false,
-        },
-      ]);
+    } catch (err) {
+      toast.error("Не удалось загрузить пользователей");
+      setUsers([]);
     } finally {
       setLoading(false);
     }
@@ -84,7 +67,7 @@ export default function AdminUsersPage() {
       setTgUsername("");
       loadUsers();
     } catch (err: any) {
-      toast.error(err.message || "Ошибка");
+      toast.error(err.message || "Ошибка создания");
     }
   };
 

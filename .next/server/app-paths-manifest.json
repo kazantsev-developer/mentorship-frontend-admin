@@ -1,8 +1,9 @@
 {
-  "/(admin)/users/page": "app/(admin)/users/page.js",
-  "/(admin)/roadmap/materials/page": "app/(admin)/roadmap/materials/page.js",
+  "/_not-found/page": "app/_not-found/page.js",
+  "/login/page": "app/login/page.js",
   "/(admin)/roadmap/blocks/page": "app/(admin)/roadmap/blocks/page.js",
   "/(admin)/dashboard/page": "app/(admin)/dashboard/page.js",
-  "/(admin)/one-on-one/page": "app/(admin)/one-on-one/page.js",
-  "/(admin)/achievements/page": "app/(admin)/achievements/page.js"
+  "/(admin)/users/page": "app/(admin)/users/page.js",
+  "/(admin)/achievements/page": "app/(admin)/achievements/page.js",
+  "/(admin)/roadmap/materials/page": "app/(admin)/roadmap/materials/page.js"
 }

@@ -17,6 +17,12 @@ module.exports = {
         "text-muted": "var(--text-muted)",
         "brand-primary": "#3B82F6",
         "brand-purple": "#8B5CF6",
+        primary: {
+          50: "#eff6ff",
+        },
+        default: {
+          100: "#f3f4f6",
+        },
       },
       fontFamily: {
         mono: ["var(--font-mono)", "Courier New", "Courier", "monospace"],

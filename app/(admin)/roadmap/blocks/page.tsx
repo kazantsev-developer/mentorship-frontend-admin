@@ -27,32 +27,11 @@ export default function AdminRoadmapBlocksPage() {
 
   const loadBlocks = async () => {
     try {
-      const data = await api.get<RoadmapBlock[]>("/api/admin/roadmap/blocks");
+      const data = await api.get<RoadmapBlock[]>("/api/admin/blocks");
       setBlocks(data || []);
     } catch {
-      setBlocks([
-        {
-          id: "b1",
-          title: "Знакомство с Go и базовый синтаксис",
-          description: "Типы данных, циклы, функции",
-          sort_order: 1,
-          is_active: true,
-        },
-        {
-          id: "b2",
-          title: "Структуры данных и ООП в Go",
-          description: "Указатели, интерфейсы, методы",
-          sort_order: 2,
-          is_active: true,
-        },
-        {
-          id: "b3",
-          title: "Конкурентность (Concurrency)",
-          description: "Горутины, каналы, пакет sync",
-          sort_order: 3,
-          is_active: false,
-        },
-      ]);
+      toast.error("Не удалось загрузить блоки");
+      setBlocks([]);
     } finally {
       setLoading(false);
     }
@@ -68,7 +47,7 @@ export default function AdminRoadmapBlocksPage() {
       return;
     }
     try {
-      await api.post("/api/admin/roadmap/blocks", {
+      await api.post("/api/admin/blocks", {
         title,
         description: description || undefined,
         sort_order: parseInt(sortOrder) || 1,
@@ -86,9 +65,7 @@ export default function AdminRoadmapBlocksPage() {
 
   const toggleBlockStatus = async (id: string, currentStatus: boolean) => {
     try {
-      await api.put(`/api/admin/roadmap/blocks/${id}/status`, {
-        is_active: !currentStatus,
-      });
+      await api.put(`/api/admin/blocks/${id}`, { is_active: !currentStatus });
       toast.success("Статус изменён");
       loadBlocks();
     } catch {
@@ -101,15 +78,6 @@ export default function AdminRoadmapBlocksPage() {
 
   return (
     <div className="space-y-6 max-w-6xl mx-auto">
-      <div>
-        <h2 className="text-xl font-semibold text-text-main">
-          Управление блоками Roadmap
-        </h2>
-        <p className="text-sm text-text-muted mt-1">
-          Создание, редактирование, порядок блоков
-        </p>
-      </div>
-
       <Card className="bg-surface border border-border-subtle shadow-none rounded-xl">
         <CardBody className="p-5 space-y-4">
           <h3 className="text-sm font-semibold text-brand-purple flex items-center gap-2">
@@ -158,7 +126,7 @@ export default function AdminRoadmapBlocksPage() {
           <TableColumn align="end">Доступен</TableColumn>
         </TableHeader>
         <TableBody>
-          {[...blocks]
+          {blocks
             .sort((a, b) => a.sort_order - b.sort_order)
             .map((block) => (
               <TableRow

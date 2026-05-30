@@ -45,30 +45,10 @@ export default function AdminUserProfilePage() {
       ]);
       setUser(userData);
       setProgress(progressData || []);
-    } catch {
-      setUser({
-        id: id as string,
-        login: "student_demo",
-        display_name: "Александр Волков",
-        telegram_username: "@sasha_volk",
-        roles: ["student"],
-        is_deleted: false,
-        learning_started_at: "2026-01-20T10:00:00Z",
-      });
-      setProgress([
-        {
-          block_id: "b1",
-          block_title: "Знакомство с Go",
-          status: "approved",
-          percent: 100,
-        },
-        {
-          block_id: "b2",
-          block_title: "Структуры данных",
-          status: "waiting_buddy_confirmation",
-          percent: 85,
-        },
-      ]);
+    } catch (err) {
+      toast.error("Не удалось загрузить данные пользователя");
+      setUser(null);
+      setProgress([]);
     } finally {
       setLoading(false);
     }

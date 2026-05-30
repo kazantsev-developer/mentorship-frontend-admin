@@ -42,3 +42,10 @@ main {
 .disable-transitions * {
   transition: none !important;
 }
+
+input:focus,
+textarea:focus,
+select:focus {
+  outline: none !important;
+  box-shadow: none !important;
+}

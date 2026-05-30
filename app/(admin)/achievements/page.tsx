@@ -24,35 +24,15 @@ export default function AdminAchievementsPage() {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [bonus, setBonus] = useState("100");
-  const [imgUrl, setImgUrl] = useState("solar:star-bold");
+  const [imgUrl, setImgUrl] = useState("mdi:star");
 
   const loadAchievements = async () => {
     try {
       const data = await api.get<Achievement[]>("/api/admin/achievements");
       setAchievements(data || []);
     } catch {
-      setAchievements([
-        {
-          id: "a1",
-          title: "Первый шаг",
-          description: "Изучить первый материал",
-          reward_bonus: 100,
-          image_url: "solar:star-bold",
-          condition_type: "manual_trigger",
-          is_active: true,
-          sort_order: 1,
-        },
-        {
-          id: "a2",
-          title: "Программист-практик",
-          description: "Сдать 5 задач",
-          reward_bonus: 500,
-          image_url: "solar:fire-bold",
-          condition_type: "manual_trigger",
-          is_active: true,
-          sort_order: 2,
-        },
-      ]);
+      toast.error("Не удалось загрузить достижения");
+      setAchievements([]);
     } finally {
       setLoading(false);
     }
@@ -81,6 +61,7 @@ export default function AdminAchievementsPage() {
       setTitle("");
       setDescription("");
       setBonus("100");
+      setImgUrl("mdi:star");
       loadAchievements();
     } catch (err: any) {
       toast.error(err.message || "Ошибка");
@@ -120,13 +101,18 @@ export default function AdminAchievementsPage() {
               value={bonus}
               onChange={(e) => setBonus(e.target.value)}
             />
-            <Input
-              size="sm"
-              label="Иконка (Iconify ID)"
-              variant="bordered"
-              value={imgUrl}
-              onChange={(e) => setImgUrl(e.target.value)}
-            />
+            <div className="flex gap-2 items-end">
+              <Input
+                size="sm"
+                label="Иконка (Iconify ID)"
+                variant="bordered"
+                value={imgUrl}
+                onChange={(e) => setImgUrl(e.target.value)}
+              />
+              <div className="p-2 rounded-lg bg-default-100">
+                <Icon icon={imgUrl} className="w-6 h-6" />
+              </div>
+            </div>
           </div>
           <Button
             size="sm"

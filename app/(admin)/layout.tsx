@@ -1,15 +1,7 @@
 "use client";
 import "../../styles/globals.css";
 import { useEffect, useState, useRef } from "react";
-import {
-  HeroUIProvider,
-  Button,
-  Avatar,
-  Dropdown,
-  DropdownTrigger,
-  DropdownMenu,
-  DropdownItem,
-} from "@heroui/react";
+import { HeroUIProvider, Button } from "@heroui/react";
 import { ThemeProvider as NextThemesProvider, useTheme } from "next-themes";
 import { usePathname, useRouter } from "next/navigation";
 import { Icon } from "@iconify/react";
@@ -17,22 +9,12 @@ import { Toaster } from "sonner";
 import { flushSync } from "react-dom";
 import AdminSidebar from "./components/admin-sidebar";
 
-// Временная заглушка (позже заменить на реальный хук)
-const useAuthMock = () => ({
-  user: { display_name: "Admin" },
-  logout: () => {
-    document.cookie = "token=; path=/; max-age=0";
-    localStorage.removeItem("token");
-    window.location.href = "/login";
-  },
-});
-
 function AdminHeader() {
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
   const buttonRef = useRef<HTMLButtonElement>(null);
-  const { user, logout } = useAuthMock();
   const pathname = usePathname();
+  const router = useRouter();
 
   useEffect(() => setMounted(true), []);
 
@@ -87,6 +69,12 @@ function AdminHeader() {
     });
   };
 
+  const handleLogout = () => {
+    document.cookie = "token=; path=/; max-age=0";
+    localStorage.removeItem("token");
+    router.push("/login");
+  };
+
   return (
     <header className="h-20 px-8 border-b border-border-subtle bg-surface/80 backdrop-blur-md sticky top-0 z-50 flex items-center justify-between">
       <div className="min-w-[200px]" />
@@ -113,33 +101,16 @@ function AdminHeader() {
             <div className="w-[18px] h-[18px] bg-text-muted/20 rounded-full" />
           )}
         </Button>
-        <Dropdown placement="bottom-end">
-          <DropdownTrigger>
-            <Button isIconOnly variant="light" className="rounded-full">
-              <Avatar
-                name={user?.display_name || "Admin"}
-                size="sm"
-                className="cursor-pointer"
-              />
-            </Button>
-          </DropdownTrigger>
-          <DropdownMenu aria-label="Профиль">
-            <DropdownItem
-              key="profile"
-              startContent={<Icon icon="lucide:user" />}
-            >
-              Профиль
-            </DropdownItem>
-            <DropdownItem
-              key="logout"
-              startContent={<Icon icon="lucide:log-out" />}
-              color="danger"
-              onClick={logout}
-            >
-              Выход
-            </DropdownItem>
-          </DropdownMenu>
-        </Dropdown>
+        <Button
+          isIconOnly
+          size="sm"
+          variant="light"
+          className="text-text-muted hover:text-danger rounded-full active:scale-95 transition-transform"
+          onClick={handleLogout}
+          title="Выйти из системы"
+        >
+          <Icon icon="lucide:log-out" className="w-[18px] h-[18px]" />
+        </Button>
       </div>
     </header>
   );
@@ -151,7 +122,6 @@ export default function AdminLayout({
   children: React.ReactNode;
 }) {
   const router = useRouter();
-
   return (
     <HeroUIProvider navigate={router.push}>
       <NextThemesProvider attribute="class" defaultTheme="system">

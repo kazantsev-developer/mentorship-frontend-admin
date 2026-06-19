@@ -1,6 +1,7 @@
 "use client";
+
 import "../../styles/globals.css";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, ReactNode } from "react";
 import { HeroUIProvider, Button } from "@heroui/react";
 import { ThemeProvider as NextThemesProvider, useTheme } from "next-themes";
 import { usePathname, useRouter } from "next/navigation";
@@ -8,6 +9,10 @@ import { Icon } from "@iconify/react";
 import { Toaster } from "sonner";
 import { flushSync } from "react-dom";
 import AdminSidebar from "./components/admin-sidebar";
+
+interface AdminLayoutProps {
+  children: ReactNode;
+}
 
 function AdminHeader() {
   const { theme, setTheme } = useTheme();
@@ -91,6 +96,7 @@ function AdminHeader() {
           variant="light"
           className="text-text-muted hover:text-text-main rounded-full active:scale-95 transition-transform"
           onClick={toggleThemeWithWave}
+          data-testid="theme-toggle"
         >
           {mounted ? (
             <Icon
@@ -108,6 +114,7 @@ function AdminHeader() {
           className="text-text-muted hover:text-danger rounded-full active:scale-95 transition-transform"
           onClick={handleLogout}
           title="Выйти из системы"
+          data-testid="logout-button"
         >
           <Icon icon="lucide:log-out" className="w-[18px] h-[18px]" />
         </Button>
@@ -116,12 +123,10 @@ function AdminHeader() {
   );
 }
 
-export default function AdminLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+/** Administrative backoffice layout initializing the client provider, sidebar navigation, view container, and toast system */
+export function AdminLayout({ children }: AdminLayoutProps) {
   const router = useRouter();
+
   return (
     <HeroUIProvider navigate={router.push}>
       <NextThemesProvider attribute="class" defaultTheme="system">
@@ -139,3 +144,5 @@ export default function AdminLayout({
     </HeroUIProvider>
   );
 }
+
+export default AdminLayout;

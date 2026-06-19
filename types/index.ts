@@ -1,5 +1,4 @@
-// types/index.ts
-
+/** Platform user core model */
 export interface User {
   id: string;
   login: string;
@@ -12,6 +11,7 @@ export interface User {
   is_deleted: boolean;
 }
 
+/** Roadmap block model */
 export interface RoadmapBlock {
   id: string;
   title: string;
@@ -20,6 +20,7 @@ export interface RoadmapBlock {
   is_active: boolean;
 }
 
+/** Learning material inside a roadmap block */
 export interface RoadmapMaterial {
   id: string;
   block_id: string;
@@ -34,6 +35,7 @@ export interface RoadmapMaterial {
   sort_order: number;
 }
 
+/** Unlockable gamification achievement */
 export interface Achievement {
   id: string;
   title: string;
@@ -45,6 +47,7 @@ export interface Achievement {
   sort_order: number;
 }
 
+/** Mentor 1-on-1 meeting request metadata */
 export interface OneOnOneRequest {
   id: string;
   student_id: string;

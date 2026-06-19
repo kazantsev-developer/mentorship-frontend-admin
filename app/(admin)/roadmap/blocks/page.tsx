@@ -1,5 +1,6 @@
 "use client";
-import { useEffect, useState } from "react";
+
+import { useEffect, useState, ChangeEvent } from "react";
 import { api } from "@/components/api";
 import {
   Table,
@@ -18,7 +19,8 @@ import { Icon } from "@iconify/react";
 import { toast } from "sonner";
 import { RoadmapBlock } from "@/types";
 
-export default function AdminRoadmapBlocksPage() {
+/** Administrative page managing educational roadmap blocks, structural sorting configurations, and visibility toggles */
+export function AdminRoadmapBlocksPage() {
   const [blocks, setBlocks] = useState<RoadmapBlock[]>([]);
   const [loading, setLoading] = useState(true);
   const [title, setTitle] = useState("");
@@ -50,7 +52,7 @@ export default function AdminRoadmapBlocksPage() {
       await api.post("/api/admin/blocks", {
         title,
         description: description || undefined,
-        sort_order: parseInt(sortOrder) || 1,
+        sort_order: parseInt(sortOrder, 10) || 1,
         is_active: true,
       });
       toast.success("Блок создан");
@@ -58,8 +60,12 @@ export default function AdminRoadmapBlocksPage() {
       setDescription("");
       setSortOrder("1");
       loadBlocks();
-    } catch (err: any) {
-      toast.error(err.message || "Ошибка");
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        toast.error(err.message);
+      } else {
+        toast.error("Ошибка при создании блока");
+      }
     }
   };
 
@@ -73,8 +79,9 @@ export default function AdminRoadmapBlocksPage() {
     }
   };
 
-  if (loading)
+  if (loading) {
     return <div className="text-center py-8">Загрузка блоков...</div>;
+  }
 
   return (
     <div className="space-y-6 max-w-6xl mx-auto">
@@ -89,14 +96,20 @@ export default function AdminRoadmapBlocksPage() {
               label="Название"
               variant="bordered"
               value={title}
-              onChange={(e) => setTitle(e.target.value)}
+              onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                setTitle(e.target.value)
+              }
+              data-testid="block-title-input"
             />
             <Input
               size="sm"
               label="Описание"
               variant="bordered"
               value={description}
-              onChange={(e) => setDescription(e.target.value)}
+              onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                setDescription(e.target.value)
+              }
+              data-testid="block-desc-input"
             />
             <Input
               size="sm"
@@ -104,7 +117,10 @@ export default function AdminRoadmapBlocksPage() {
               label="Порядок"
               variant="bordered"
               value={sortOrder}
-              onChange={(e) => setSortOrder(e.target.value)}
+              onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                setSortOrder(e.target.value)
+              }
+              data-testid="block-sort-input"
             />
           </div>
           <div className="flex justify-end">
@@ -113,6 +129,7 @@ export default function AdminRoadmapBlocksPage() {
               color="secondary"
               className="font-medium text-xs"
               onClick={handleCreateBlock}
+              data-testid="block-submit-button"
             >
               Создать блок
             </Button>
@@ -120,7 +137,7 @@ export default function AdminRoadmapBlocksPage() {
         </CardBody>
       </Card>
 
-      <Table aria-label="Блоки">
+      <Table aria-label="Блоки" data-testid="blocks-table">
         <TableHeader>
           <TableColumn>Порядок</TableColumn>
           <TableColumn>Название</TableColumn>
@@ -133,6 +150,7 @@ export default function AdminRoadmapBlocksPage() {
             .map((block) => (
               <TableRow
                 key={block.id}
+                data-testid={`block-row-${block.id}`}
                 className="border-b border-border-subtle/40 last:border-none"
               >
                 <TableCell className="text-sm">#{block.sort_order}</TableCell>
@@ -150,6 +168,7 @@ export default function AdminRoadmapBlocksPage() {
                     onChange={() =>
                       toggleBlockStatus(block.id, block.is_active)
                     }
+                    data-testid={`block-status-switch-${block.id}`}
                   />
                 </TableCell>
               </TableRow>
@@ -159,3 +178,5 @@ export default function AdminRoadmapBlocksPage() {
     </div>
   );
 }
+
+export default AdminRoadmapBlocksPage;

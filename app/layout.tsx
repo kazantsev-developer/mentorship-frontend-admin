@@ -1,13 +1,16 @@
+import { ReactNode } from "react";
+import clsx from "clsx";
+
 import "@/styles/globals.css";
 import { fontSans } from "@/config/fonts";
-import clsx from "clsx";
 import { Providers } from "./providers";
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+interface RootLayoutProps {
+  children: ReactNode;
+}
+
+/** Root layout component responsible for baseline HTML structure, global fonts, and core providers context initialization */
+export function RootLayout({ children }: RootLayoutProps) {
   return (
     <html lang="ru" suppressHydrationWarning>
       <body className={clsx("font-sans antialiased", fontSans.variable)}>
@@ -16,3 +19,5 @@ export default function RootLayout({
     </html>
   );
 }
+
+export default RootLayout;

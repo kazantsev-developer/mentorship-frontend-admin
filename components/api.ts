@@ -33,7 +33,7 @@ async function request<T>(
   if (!res.ok) {
     const err = await res
       .json()
-      .catch(() => ({ message: "Ошибка запроса к бэкенду админ-панели" }));
+      .catch(() => ({ message: "backend request failed" }));
     throw new Error(err.message || `HTTP ${res.status}`);
   }
 
@@ -41,13 +41,14 @@ async function request<T>(
   return res.json();
 }
 
+/** Centralized HTTP transport client mapping semantic network actions */
 export const api = {
   get: <T>(endpoint: string) => request<T>(endpoint, { method: "GET" }),
-  post: <T>(endpoint: string, body?: any) =>
+  post: <T>(endpoint: string, body?: unknown) =>
     request<T>(endpoint, { method: "POST", body: JSON.stringify(body) }),
-  put: <T>(endpoint: string, body?: any) =>
+  put: <T>(endpoint: string, body?: unknown) =>
     request<T>(endpoint, { method: "PUT", body: JSON.stringify(body) }),
-  patch: <T>(endpoint: string, body?: any) =>
+  patch: <T>(endpoint: string, body?: unknown) =>
     request<T>(endpoint, { method: "PATCH", body: JSON.stringify(body) }),
   delete: <T>(endpoint: string) => request<T>(endpoint, { method: "DELETE" }),
 };

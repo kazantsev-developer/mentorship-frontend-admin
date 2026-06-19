@@ -1,5 +1,6 @@
 "use client";
-import { useEffect, useState } from "react";
+
+import { useEffect, useState, ChangeEvent } from "react";
 import { api } from "@/components/api";
 import {
   Table,
@@ -29,7 +30,8 @@ const WORKING_ICONS = [
   { id: "ph:star-fill", name: "Звезда (Phosphor)" },
 ];
 
-export default function AdminAchievementsPage() {
+/** Administrative page managing custom gamification milestones and unlockable achievements */
+export function AdminAchievementsPage() {
   const [achievements, setAchievements] = useState<Achievement[]>([]);
   const [loading, setLoading] = useState(true);
   const [title, setTitle] = useState("");
@@ -62,7 +64,7 @@ export default function AdminAchievementsPage() {
       await api.post("/api/admin/achievements", {
         title,
         description,
-        reward_bonus: parseInt(bonus),
+        reward_bonus: parseInt(bonus, 10),
         image_url: imgUrl,
         condition_type: "manual_trigger",
         is_active: true,
@@ -74,13 +76,18 @@ export default function AdminAchievementsPage() {
       setBonus("100");
       setImgUrl("mdi:star");
       loadAchievements();
-    } catch (err: any) {
-      toast.error(err.message || "Ошибка");
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        toast.error(err.message);
+      } else {
+        toast.error("Ошибка при добавлении достижения");
+      }
     }
   };
 
-  if (loading)
+  if (loading) {
     return <div className="text-center py-8">Загрузка достижений...</div>;
+  }
 
   return (
     <div className="space-y-6 max-w-6xl mx-auto">
@@ -88,7 +95,7 @@ export default function AdminAchievementsPage() {
         <CardBody className="p-6">
           <h3 className="text-sm font-semibold text-brand-purple flex items-center gap-2 mb-4">
             <Icon icon="mdi:star" className="w-4 h-4 text-brand-purple" />
-            Новое достижение
+            Новое achievement
           </h3>
 
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -97,14 +104,20 @@ export default function AdminAchievementsPage() {
               label="Название"
               variant="bordered"
               value={title}
-              onChange={(e) => setTitle(e.target.value)}
+              onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                setTitle(e.target.value)
+              }
+              data-testid="achievement-title-input"
             />
             <Input
               size="sm"
               label="Описание"
               variant="bordered"
               value={description}
-              onChange={(e) => setDescription(e.target.value)}
+              onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                setDescription(e.target.value)
+              }
+              data-testid="achievement-desc-input"
             />
             <Input
               size="sm"
@@ -112,7 +125,10 @@ export default function AdminAchievementsPage() {
               label="Награда (бонусы)"
               variant="bordered"
               value={bonus}
-              onChange={(e) => setBonus(e.target.value)}
+              onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                setBonus(e.target.value)
+              }
+              data-testid="achievement-bonus-input"
             />
             <div className="flex gap-2 items-end">
               <Select
@@ -124,6 +140,7 @@ export default function AdminAchievementsPage() {
                   const selected = Array.from(keys)[0] as string;
                   if (selected) setImgUrl(selected);
                 }}
+                data-testid="achievement-icon-select"
               >
                 {WORKING_ICONS.map((icon) => (
                   <SelectItem key={icon.id}>{icon.name}</SelectItem>
@@ -136,14 +153,20 @@ export default function AdminAchievementsPage() {
           </div>
 
           <div className="mt-4 flex justify-end">
-            <Button size="sm" color="secondary" className="font-medium text-xs">
+            <Button
+              size="sm"
+              color="secondary"
+              className="font-medium text-xs"
+              onClick={handleCreate}
+              data-testid="achievement-submit-button"
+            >
               Добавить достижение
             </Button>
           </div>
         </CardBody>
       </Card>
 
-      <Table aria-label="Достижения">
+      <Table aria-label="Достижения" data-testid="achievements-table">
         <TableHeader>
           <TableColumn>Иконка</TableColumn>
           <TableColumn>Название</TableColumn>
@@ -196,3 +219,5 @@ export default function AdminAchievementsPage() {
     </div>
   );
 }
+
+export default AdminAchievementsPage;

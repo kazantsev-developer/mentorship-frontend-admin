@@ -1,6 +1,6 @@
 # Go Mentorship Platform (Frontend – Admin Panel)
 
-Administrative control panel for managing the platform. Built with Next.js, TypeScript, Tailwind CSS, and HeroUI.
+Administrative control panel for managing the platform. Built with React, Vite, TypeScript, Tailwind CSS, and HeroUI.
 
 ## Prerequisites
 
@@ -11,43 +11,47 @@ Administrative control panel for managing the platform. Built with Next.js, Type
 ## Quick Start
 
 1. Clone the repository and navigate to the project root directory:
+
    git clone https://github.com
    cd mentorship-frontend-admin
 
 2. Production build and deployment via Docker Compose:
-   docker compose build --build-arg NEXT_PUBLIC_API_URL=http://localhost:8080
+   docker compose build --build-arg VITE_PUBLIC_API_URL=http://localhost:8080
    docker compose up -d
    The admin panel will be available at http://localhost:3001.
 
 ## Local Development
 
 1. Install dependencies:
-   npm install
 
-2. Start the development server:
+   npm install --legacy-peer-deps
+
+2. Start the Vite development server:
    npm run dev
 
 ## Credentials
 
 Use these pre-seeded credentials for local demo environments:
 
-- Login: 123
-- Password: admin
+- Login: admin
+- Password: admin123
 
 ## Tech Stack
 
-- Next.js 14 (App Router)
+- React 18
+- Vite 5 (Single Page Application)
+- React Router DOM v6 (Client-side routing layout)
 - TypeScript
 - Tailwind CSS (Dark/Light mode support via CSS variables)
 - HeroUI (Table, Card, Button, Modal, Tabs)
 - Iconify (Icon system)
 - Sonner (Toast notifications)
-- next-themes (Theme management)
+- next-themes (Theme management mapping)
 
 ## Features
 
 - Dashboard — Platform statistics including users, students, buddies, 1:1 requests, and issued achievements.
-- User Management — Complete CRUD operations, soft deletion, role assignment (student/buddy/admin), and buddy-to-student assignments.
+- User Management — Complete CRUD operations, soft deletion, role assignment, and buddy-to-student assignments.
 - Roadmap Blocks — Complete CRUD operations, sorting mechanics, and block activation/deactivation toggles.
 - Study Materials — Material card management (theory, questions, practice, homework) linked to specific blocks with required/optional status flags.
 - Achievements — Gamification mechanics including title, description, rewards, custom icons, and user distribution tracking.
@@ -56,8 +60,8 @@ Use these pre-seeded credentials for local demo environments:
 
 ## Environment Variables
 
-- NEXT_PUBLIC_API_URL — URL of the backend API service (defaults to http://localhost:8080)
-- NEXT_PUBLIC_MAIN_SITE_URL — URL of the primary student/mentor platform interface
+- VITE_PUBLIC_API_URL — URL of the backend API service (defaults to http://localhost:8080)
+- VITE_PUBLIC_MAIN_SITE_URL — URL of the primary student/mentor platform interface
 
 ## Verification and Setup
 
@@ -68,7 +72,8 @@ The backend service must accept requests originating from http://localhost:3001.
 ### API Authentication Probe
 
 Verify API routing and authentication using the login endpoint:
-curl -X POST http://localhost:8080/api/auth/login -H "Content-Type: application/json" -d '{"login":"admin","password":"123"}'
+
+curl -X POST http://localhost:8080/api/auth/login -H "Content-Type: application/json" -d '{"login":"admin","password":"admin123"}'
 
 ### Creating Initial Curriculum Materials
 
@@ -79,5 +84,6 @@ curl -X POST http://localhost:8080/api/auth/login -H "Content-Type: application/
 ### Seeding Demo Accounts
 
 If the required test profiles are missing from your environment, seed them via the registration API or create them through the user management interface:
+
 curl -X POST http://localhost:8080/api/auth/register -H "Content-Type: application/json" -d '{"login":"test_student","password":"123","display_name":"Test Student","roles":["student"]}'
 curl -X POST http://localhost:8080/api/auth/register -H "Content-Type: application/json" -d '{"login":"test_buddy","password":"123","display_name":"Test Buddy","roles":["buddy"]}'

@@ -1,0 +1,247 @@
+import { useEffect, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { api } from "@/shared/api";
+import {
+  Card,
+  CardBody,
+  Button,
+  Chip,
+  Spinner,
+  Table,
+  TableHeader,
+  TableColumn,
+  TableBody,
+  TableRow,
+  TableCell,
+} from "@heroui/react";
+import { Icon } from "@iconify/react";
+import { toast } from "sonner";
+
+interface BackendUserProfile {
+  ID: string;
+  Login: string;
+  DisplayName: string;
+  AvatarURL?: string;
+  About?: string;
+  TelegramUsername?: string;
+  LearningStartedAt?: string;
+  IsProfilePrivate: boolean;
+  IsDeleted: boolean;
+}
+
+interface StudentProgressLog {
+  block_id: string;
+  block_title: string;
+  status:
+    | "not_started"
+    | "in_progress"
+    | "waiting_buddy_confirmation"
+    | "approved";
+  percent: number;
+}
+
+/** Administrative view displaying detailed user profile statistics and execution boundaries for direct milestone overrides */
+export function AdminUserProfilePage() {
+  const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
+  const [user, setUser] = useState<BackendUserProfile | null>(null);
+  const [progress, setProgress] = useState<StudentProgressLog[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  const loadUserProfile = async () => {
+    try {
+      const [userData, progressData] = await Promise.all([
+        api.get<BackendUserProfile>(`/api/admin/users/${id}`),
+        api.get<StudentProgressLog[]>(`/api/admin/users/${id}/progress`),
+      ]);
+      setUser(userData);
+      setProgress(progressData || []);
+    } catch {
+      toast.error("Не удалось загрузить данные пользователя");
+      setUser(null);
+      setProgress([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (id) loadUserProfile();
+  }, [id]);
+
+  const handleSuperBuddyApprove = async (blockId: string) => {
+    try {
+      await api.post(`/api/admin/users/${id}/approve-block/${blockId}`, {});
+      toast.success("Блок подтверждён администратором!");
+      loadUserProfile();
+    } catch {
+      toast.error("Не удалось подтвердить блок");
+    }
+  };
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case "approved":
+        return "success";
+      case "waiting_buddy_confirmation":
+        return "warning";
+      case "in_progress":
+        return "primary";
+      default:
+        return "default";
+    }
+  };
+
+  const formatLearningDate = (dateStr?: string) => {
+    if (!dateStr || dateStr.startsWith("0001-01-01")) return "—";
+    try {
+      return new Date(dateStr).toLocaleDateString();
+    } catch {
+      return "—";
+    }
+  };
+
+  if (loading) {
+    return (
+      <Spinner
+        className="flex h-[60vh] justify-center"
+        color="secondary"
+        size="lg"
+        data-testid="profile-spinner"
+      />
+    );
+  }
+
+  if (!user) {
+    return (
+      <div
+        className="text-center py-8 text-danger"
+        data-testid="profile-not-found"
+      >
+        Профиль не найден
+      </div>
+    );
+  }
+
+  return (
+    <div
+      className="space-y-6 max-w-5xl mx-auto"
+      data-testid="user-profile-view"
+    >
+      <Button
+        size="sm"
+        variant="bordered"
+        className="border-border-subtle text-text-muted"
+        onClick={() => navigate("/users")}
+        data-testid="profile-back-button"
+      >
+        <Icon icon="lucide:arrow-left" /> Назад
+      </Button>
+
+      <Card
+        className="bg-surface border border-border-subtle shadow-none rounded-xl"
+        data-testid="user-meta-card"
+      >
+        <CardBody className="p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+          <div className="space-y-1">
+            <div className="flex items-center gap-2">
+              <h2 className="text-xl font-bold text-text-main">
+                {user.DisplayName}
+              </h2>
+              <Chip
+                size="sm"
+                variant="flat"
+                color="secondary"
+                className="text-[10px] font-medium uppercase"
+              >
+                @{user.Login}
+              </Chip>
+            </div>
+            <p className="text-sm text-text-muted">
+              Дата начала: {formatLearningDate(user.LearningStartedAt)}
+            </p>
+            {user.TelegramUsername && (
+              <p className="text-sm text-brand-purple font-medium">
+                Telegram: {user.TelegramUsername}
+              </p>
+            )}
+          </div>
+          <div className="flex gap-2">
+            <span className="text-xs text-text-muted italic">—</span>
+          </div>
+        </CardBody>
+      </Card>
+
+      <div className="space-y-4">
+        <div>
+          <h3 className="text-base font-semibold text-text-main flex items-center gap-2">
+            <Icon icon="lucide:shield-alert" className="text-brand-purple" />{" "}
+            Прогресс студента
+          </h3>
+          <p className="text-sm text-text-muted">
+            Администратор может подтверждать блоки вручную
+          </p>
+        </div>
+        <Table
+          aria-label="Прогресс по блокам"
+          data-testid="student-progress-table"
+        >
+          <TableHeader>
+            <TableColumn>Блок</TableColumn>
+            <TableColumn>Прогресс</TableColumn>
+            <TableColumn>Статус</TableColumn>
+            <TableColumn align="end">Действие</TableColumn>
+          </TableHeader>
+          <TableBody>
+            {progress.map((prog) => (
+              <TableRow
+                key={prog.block_id}
+                data-testid={`progress-row-${prog.block_id}`}
+                className="border-b border-border-subtle/40 last:border-none"
+              >
+                <TableCell className="text-sm font-medium">
+                  {prog.block_title}
+                </TableCell>
+                <TableCell className="text-sm">{prog.percent}%</TableCell>
+                <TableCell>
+                  <Chip
+                    size="sm"
+                    variant="flat"
+                    color={getStatusColor(prog.status)}
+                    className="text-[10px] uppercase font-medium"
+                  >
+                    {prog.status.replace(/_/g, " ")}
+                  </Chip>
+                </TableCell>
+                <TableCell className="text-right">
+                  {prog.status === "waiting_buddy_confirmation" ? (
+                    <Button
+                      size="sm"
+                      color="success"
+                      variant="flat"
+                      className="text-xs font-medium"
+                      onClick={() => handleSuperBuddyApprove(prog.block_id)}
+                      data-testid={`super-approve-${prog.block_id}`}
+                    >
+                      Подтвердить
+                    </Button>
+                  ) : prog.status === "approved" ? (
+                    <span className="text-xs text-success italic">
+                      Одобрено
+                    </span>
+                  ) : (
+                    <span className="text-xs text-text-muted italic">
+                      В процессе
+                    </span>
+                  )}
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
+    </div>
+  );
+}
+
+export default AdminUserProfilePage;

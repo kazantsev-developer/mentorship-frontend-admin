@@ -11,7 +11,6 @@ Administrative dashboard for the Go mentorship platform. Built with React 18, Vi
 ## Quick Start
 
 1. Clone the repository and navigate to the project root directory:
-
    ```bash
    git clone https://github.com
    cd mentorship-frontend-admin
@@ -27,7 +26,6 @@ Administrative dashboard for the Go mentorship platform. Built with React 18, Vi
 ## Local Development
 
 1. Install dependencies:
-
    ```bash
    npm install --legacy-peer-deps
    ```
@@ -80,7 +78,6 @@ The backend service must accept requests originating from http://localhost:3001.
 ### API Authentication Probe
 
 Verify API routing and authentication using the login endpoint:
-
 ```bash
 curl -X POST http://localhost:8080/api/auth/login \
   -H "Content-Type: application/json" \
@@ -96,7 +93,6 @@ curl -X POST http://localhost:8080/api/auth/login \
 ### Seeding Demo Accounts
 
 If the required test profiles are missing from your environment, seed them via the registration API or create them through the user management interface:
-
 ```bash
 curl -X POST http://localhost:8080/api/auth/register \
   -H "Content-Type: application/json" \

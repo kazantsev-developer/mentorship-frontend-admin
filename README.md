@@ -1,6 +1,6 @@
 # Go Mentorship Platform (Frontend – Admin Panel)
 
-Administrative control panel for managing the platform. Built with React, Vite, TypeScript, Tailwind CSS, and HeroUI.
+Administrative dashboard for the Go mentorship platform. Built with React 18, Vite 5, TypeScript, Tailwind CSS, and HeroUI. Manages users, roadmap blocks, materials, achievements, and 1‑on‑1 requests.
 
 ## Prerequisites
 
@@ -12,29 +12,37 @@ Administrative control panel for managing the platform. Built with React, Vite, 
 
 1. Clone the repository and navigate to the project root directory:
 
+   ```bash
    git clone https://github.com
    cd mentorship-frontend-admin
+   ```
 
 2. Production build and deployment via Docker Compose:
+   ```bash
    docker compose build --build-arg VITE_PUBLIC_API_URL=http://localhost:8080
    docker compose up -d
+   ```
    The admin panel will be available at http://localhost:3001.
 
 ## Local Development
 
 1. Install dependencies:
 
+   ```bash
    npm install --legacy-peer-deps
+   ```
 
 2. Start the Vite development server:
+   ```bash
    npm run dev
+   ```
 
 ## Credentials
 
 Use these pre-seeded credentials for local demo environments:
 
-- Login: admin
-- Password: admin123
+- **Login**: `admin`
+- **Password**: `admin123`
 
 ## Tech Stack
 
@@ -50,30 +58,34 @@ Use these pre-seeded credentials for local demo environments:
 
 ## Features
 
-- Dashboard — Platform statistics including users, students, buddies, 1:1 requests, and issued achievements.
-- User Management — Complete CRUD operations, soft deletion, role assignment, and buddy-to-student assignments.
-- Roadmap Blocks — Complete CRUD operations, sorting mechanics, and block activation/deactivation toggles.
-- Study Materials — Material card management (theory, questions, practice, homework) linked to specific blocks with required/optional status flags.
-- Achievements — Gamification mechanics including title, description, rewards, custom icons, and user distribution tracking.
-- 1:1 Requests — Approval, rejection, and completion workflows with automated 1,000 bonus point deductions.
-- Progress Overview — Administrative bypass to approve educational blocks directly without requiring buddy validation.
+- **Dashboard** — Platform statistics including users, students, buddies, 1:1 requests, and issued achievements.
+- **User Management** — Complete CRUD operations, soft deletion, role assignment, and buddy-to-student assignments.
+- **Roadmap Blocks** — Complete CRUD operations, sorting mechanics, and block activation/deactivation toggles.
+- **Study Materials** — Material card management (theory, questions, practice, homework) linked to specific blocks with required/optional status flags.
+- **Achievements** — Gamification mechanics including title, description, rewards, custom icons, and user distribution tracking.
+- **1:1 Requests** — Approval, rejection, and completion workflows with automated 1,000 bonus point deductions.
+- **Progress Overview** — Administrative bypass to approve educational blocks directly without requiring buddy validation.
 
 ## Environment Variables
 
-- VITE_PUBLIC_API_URL — URL of the backend API service (defaults to http://localhost:8080)
-- VITE_PUBLIC_MAIN_SITE_URL — URL of the primary student/mentor platform interface
+- `VITE_PUBLIC_API_URL` — URL of the backend API service (defaults to http://localhost:8080)
+- `VITE_PUBLIC_MAIN_SITE_URL` — URL of the primary student/mentor platform interface
 
 ## Verification and Setup
 
 ### CORS Configuration
 
-The backend service must accept requests originating from http://localhost:3001. Verify that this origin is explicitly included in the backend ALLOWED_ORIGINS configuration.
+The backend service must accept requests originating from http://localhost:3001. Verify that this origin is explicitly included in the backend `ALLOWED_ORIGINS` configuration.
 
 ### API Authentication Probe
 
 Verify API routing and authentication using the login endpoint:
 
-curl -X POST http://localhost:8080/api/auth/login -H "Content-Type: application/json" -d '{"login":"admin","password":"admin123"}'
+```bash
+curl -X POST http://localhost:8080/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"login":"admin","password":"admin123"}'
+```
 
 ### Creating Initial Curriculum Materials
 
@@ -85,5 +97,12 @@ curl -X POST http://localhost:8080/api/auth/login -H "Content-Type: application/
 
 If the required test profiles are missing from your environment, seed them via the registration API or create them through the user management interface:
 
-curl -X POST http://localhost:8080/api/auth/register -H "Content-Type: application/json" -d '{"login":"test_student","password":"123","display_name":"Test Student","roles":["student"]}'
-curl -X POST http://localhost:8080/api/auth/register -H "Content-Type: application/json" -d '{"login":"test_buddy","password":"123","display_name":"Test Buddy","roles":["buddy"]}'
+```bash
+curl -X POST http://localhost:8080/api/auth/register \
+  -H "Content-Type: application/json" \
+  -d '{"login":"test_student","password":"123","display_name":"Test Student","roles":["student"]}'
+
+curl -X POST http://localhost:8080/api/auth/register \
+  -H "Content-Type: application/json" \
+  -d '{"login":"test_buddy","password":"123","display_name":"Test Buddy","roles":["buddy"]}'
+```

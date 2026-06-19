@@ -1,5 +1,6 @@
 "use client";
-import { useEffect, useState } from "react";
+
+import { useEffect, useState, ChangeEvent } from "react";
 import { api } from "@/components/api";
 import {
   Table,
@@ -18,7 +19,8 @@ import { Icon } from "@iconify/react";
 import { toast } from "sonner";
 import { User } from "@/types";
 
-export default function AdminUsersPage() {
+/** Administrative page managing platform accounts, role configurations, and account state lifecycles */
+export function AdminUsersPage() {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [login, setLogin] = useState("");
@@ -33,7 +35,7 @@ export default function AdminUsersPage() {
     try {
       const data = await api.get<User[]>("/api/admin/users");
       setUsers(data || []);
-    } catch (err) {
+    } catch {
       toast.error("Не удалось загрузить пользователей");
       setUsers([]);
     } finally {
@@ -66,8 +68,12 @@ export default function AdminUsersPage() {
       setDisplayName("");
       setTgUsername("");
       loadUsers();
-    } catch (err: any) {
-      toast.error(err.message || "Ошибка создания");
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        toast.error(err.message);
+      } else {
+        toast.error("Ошибка создания");
+      }
     }
   };
 
@@ -81,8 +87,9 @@ export default function AdminUsersPage() {
     }
   };
 
-  if (loading)
+  if (loading) {
     return <div className="text-center py-8">Загрузка пользователей...</div>;
+  }
 
   return (
     <div className="space-y-8 max-w-7xl mx-auto">
@@ -96,7 +103,10 @@ export default function AdminUsersPage() {
             label="Логин"
             variant="bordered"
             value={login}
-            onChange={(e) => setLogin(e.target.value)}
+            onChange={(e: ChangeEvent<HTMLInputElement>) =>
+              setLogin(e.target.value)
+            }
+            data-testid="user-login-input"
           />
           <Input
             size="sm"
@@ -104,14 +114,20 @@ export default function AdminUsersPage() {
             label="Пароль"
             variant="bordered"
             value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            onChange={(e: ChangeEvent<HTMLInputElement>) =>
+              setPassword(e.target.value)
+            }
+            data-testid="user-password-input"
           />
           <Input
             size="sm"
             label="Отображаемое имя"
             variant="bordered"
             value={displayName}
-            onChange={(e) => setDisplayName(e.target.value)}
+            onChange={(e: ChangeEvent<HTMLInputElement>) =>
+              setDisplayName(e.target.value)
+            }
+            data-testid="user-name-input"
           />
           <Input
             size="sm"
@@ -119,14 +135,20 @@ export default function AdminUsersPage() {
             variant="bordered"
             placeholder="@username"
             value={tgUsername}
-            onChange={(e) => setTgUsername(e.target.value)}
+            onChange={(e: ChangeEvent<HTMLInputElement>) =>
+              setTgUsername(e.target.value)
+            }
+            data-testid="user-telegram-input"
           />
           <Select
             size="sm"
             label="Роль"
             variant="bordered"
             defaultSelectedKeys={["student"]}
-            onChange={(e) => setSelectedRole(e.target.value as any)}
+            onChange={(e: ChangeEvent<HTMLSelectElement>) =>
+              setSelectedRole(e.target.value as "student" | "buddy" | "admin")
+            }
+            data-testid="user-role-select"
           >
             <SelectItem key="student">Student</SelectItem>
             <SelectItem key="buddy">Buddy</SelectItem>
@@ -134,7 +156,13 @@ export default function AdminUsersPage() {
           </Select>
         </div>
         <div className="flex justify-end">
-          <Button size="sm" color="secondary" className="font-medium text-xs">
+          <Button
+            size="sm"
+            color="secondary"
+            className="font-medium text-xs"
+            onClick={handleCreateUser}
+            data-testid="user-submit-button"
+          >
             Зарегистрировать
           </Button>
         </div>
@@ -143,6 +171,7 @@ export default function AdminUsersPage() {
       <Table
         aria-label="Таблица пользователей"
         className="bg-surface border border-border-subtle rounded-xl shadow-none"
+        data-testid="users-table"
       >
         <TableHeader>
           <TableColumn>Логин</TableColumn>
@@ -156,6 +185,7 @@ export default function AdminUsersPage() {
           {users.map((u) => (
             <TableRow
               key={u.id}
+              data-testid={`user-row-${u.id}`}
               className="border-b border-border-subtle/40 last:border-none"
             >
               <TableCell className="text-sm">{u.login}</TableCell>
@@ -167,6 +197,7 @@ export default function AdminUsersPage() {
                     target="_blank"
                     rel="noreferrer"
                     className="hover:underline flex items-center gap-1"
+                    data-testid={`user-tg-link-${u.id}`}
                   >
                     <Icon icon="lucide:send" className="w-3 h-3" />{" "}
                     {u.telegram_username}
@@ -209,6 +240,7 @@ export default function AdminUsersPage() {
                     isIconOnly
                     onClick={() => handleSoftDelete(u.id)}
                     title="Удалить"
+                    data-testid={`user-delete-button-${u.id}`}
                   >
                     <Icon icon="lucide:user-x" className="w-4 h-4" />
                   </Button>
@@ -225,3 +257,5 @@ export default function AdminUsersPage() {
     </div>
   );
 }
+
+export default AdminUsersPage;

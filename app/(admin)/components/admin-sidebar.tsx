@@ -1,7 +1,8 @@
 "use client";
+
 import { useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import { Button, Tooltip } from "@heroui/react";
+import { Tooltip } from "@heroui/react";
 import { Icon } from "@iconify/react";
 
 interface MenuItem {
@@ -19,7 +20,8 @@ const menuItems: MenuItem[] = [
   { href: "/one-on-one", label: "Заявки 1x1", icon: "lucide:help-circle" },
 ];
 
-export default function AdminSidebar() {
+/** Administrative panel sidebar component handling responsive navigation layout and viewport toggle triggers */
+export function AdminSidebar() {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
@@ -33,6 +35,7 @@ export default function AdminSidebar() {
       <div
         key={item.href}
         onClick={() => router.push(item.href)}
+        data-testid={`sidebar-item-${item.href.replace("/", "")}`}
         className={`h-12 px-3 rounded-md font-mono text-base transition-colors mb-1 flex items-center cursor-pointer ${
           isCollapsed ? "justify-center px-0" : ""
         } ${
@@ -52,9 +55,9 @@ export default function AdminSidebar() {
 
   return (
     <>
-      {/* Мобильная кнопка */}
       <button
         onClick={() => setIsCollapsed(!isCollapsed)}
+        data-testid="sidebar-mobile-toggle"
         className="fixed left-4 top-4 z-50 p-2 rounded-lg bg-surface border border-border-subtle text-text-muted hover:text-text-main transition-all duration-300 lg:hidden"
       >
         <Icon
@@ -69,7 +72,6 @@ export default function AdminSidebar() {
         }`}
       >
         <div>
-          {/* Полный логотип */}
           <div
             className={`flex flex-col items-center text-center mb-8 transition-all duration-300 ${
               isCollapsed ? "opacity-0 h-0 overflow-hidden" : "opacity-100"
@@ -83,7 +85,6 @@ export default function AdminSidebar() {
             </span>
           </div>
 
-          {/* Компактный логотип */}
           {isCollapsed && (
             <div className="flex justify-center mb-8">
               <span className="text-2xl font-bold text-brand-primary font-mono">
@@ -92,9 +93,9 @@ export default function AdminSidebar() {
             </div>
           )}
 
-          {/* Кнопка сворачивания */}
           <button
             onClick={() => setIsCollapsed(!isCollapsed)}
+            data-testid="sidebar-desktop-toggle"
             className={`hidden lg:flex items-center justify-center w-full mb-4 p-2 rounded-lg bg-surface border border-border-subtle text-text-muted hover:text-text-main transition-all duration-300 ${
               isCollapsed ? "px-0" : ""
             }`}
@@ -110,7 +111,6 @@ export default function AdminSidebar() {
             )}
           </button>
 
-          {/* Меню */}
           <div className="flex flex-col gap-1">
             {menuItems.map((item) =>
               isCollapsed ? (
@@ -124,7 +124,6 @@ export default function AdminSidebar() {
           </div>
         </div>
 
-        {/* Кнопка основного сайта */}
         <Tooltip
           content="На основной сайт"
           placement="right"
@@ -138,6 +137,7 @@ export default function AdminSidebar() {
                 "_blank",
               )
             }
+            data-testid="sidebar-external-link"
             className={`w-full mt-4 h-9 rounded-md text-xs text-text-muted hover:text-text-main flex items-center justify-center gap-2 transition-all hover:bg-surface/30 border border-border-subtle ${
               isCollapsed ? "px-0" : "px-3"
             }`}
@@ -150,3 +150,5 @@ export default function AdminSidebar() {
     </>
   );
 }
+
+export default AdminSidebar;

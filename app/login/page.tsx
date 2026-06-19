@@ -1,11 +1,18 @@
 "use client";
-import { useState } from "react";
+
+import { useState, FormEvent, ChangeEvent } from "react";
 import { useRouter } from "next/navigation";
-import { Button, Input, Divider } from "@heroui/react";
+import { Button, Input } from "@heroui/react";
 import { Icon } from "@iconify/react";
 import { api } from "@/components/api";
 
-export default function AdminLoginPage() {
+interface LoginResponse {
+  token: string;
+  roles: string[];
+}
+
+/** Identity authentication gateway view for administrative access */
+export function AdminLoginPage() {
   const [login, setLogin] = useState("");
   const [password, setPassword] = useState("");
   const [isVisible, setIsVisible] = useState(false);
@@ -15,25 +22,32 @@ export default function AdminLoginPage() {
 
   const toggleVisibility = () => setIsVisible(!isVisible);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setError("");
     setLoading(true);
     try {
-      const res = await api.post<{ token: string; user: any; roles: string[] }>(
-        "/api/auth/login",
-        { login, password },
-      );
+      const res = await api.post<LoginResponse>("/api/auth/login", {
+        login,
+        password,
+      });
+
       document.cookie = `token=${res.token}; path=/; max-age=604800; SameSite=Lax`;
       localStorage.setItem("token", res.token);
+
       if (!res.roles.includes("admin")) {
         setError("У вас нет прав администратора");
         setLoading(false);
         return;
       }
+
       router.push("/dashboard");
-    } catch (err: any) {
-      setError(err.message || "Неверный логин или пароль");
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("Неверный логин или пароль");
+      }
     } finally {
       setLoading(false);
     }
@@ -51,10 +65,19 @@ export default function AdminLoginPage() {
         </div>
 
         {error && (
-          <div className="text-center text-danger text-sm">{error}</div>
+          <div
+            className="text-center text-danger text-sm"
+            data-testid="login-error"
+          >
+            {error}
+          </div>
         )}
 
-        <form className="flex flex-col gap-3" onSubmit={handleSubmit}>
+        <form
+          className="flex flex-col gap-3"
+          onSubmit={handleSubmit}
+          data-testid="login-form"
+        >
           <Input
             isRequired
             label="Логин"
@@ -62,7 +85,10 @@ export default function AdminLoginPage() {
             placeholder="Введите логин"
             variant="bordered"
             value={login}
-            onChange={(e) => setLogin(e.target.value)}
+            onChange={(e: ChangeEvent<HTMLInputElement>) =>
+              setLogin(e.target.value)
+            }
+            data-testid="login-input"
           />
           <Input
             isRequired
@@ -72,9 +98,16 @@ export default function AdminLoginPage() {
             variant="bordered"
             type={isVisible ? "text" : "password"}
             value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            onChange={(e: ChangeEvent<HTMLInputElement>) =>
+              setPassword(e.target.value)
+            }
+            data-testid="password-input"
             endContent={
-              <button type="button" onClick={toggleVisibility}>
+              <button
+                type="button"
+                onClick={toggleVisibility}
+                data-testid="password-toggle"
+              >
                 {isVisible ? (
                   <Icon
                     className="text-2xl text-default-400"
@@ -93,6 +126,7 @@ export default function AdminLoginPage() {
             className="w-full bg-blue-600 text-white"
             type="submit"
             isLoading={loading}
+            data-testid="login-submit"
           >
             Войти
           </Button>
@@ -101,3 +135,5 @@ export default function AdminLoginPage() {
     </div>
   );
 }
+
+export default AdminLoginPage;

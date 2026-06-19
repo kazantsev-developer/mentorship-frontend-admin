@@ -1,4 +1,5 @@
 "use client";
+
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { api } from "@/components/api";
@@ -30,7 +31,8 @@ interface StudentProgressLog {
   percent: number;
 }
 
-export default function AdminUserProfilePage() {
+/** Administrative view displaying detailed user profile statistics and execution boundaries for direct milestone overrides */
+export function AdminUserProfilePage() {
   const { id } = useParams();
   const router = useRouter();
   const [user, setUser] = useState<User | null>(null);
@@ -45,7 +47,7 @@ export default function AdminUserProfilePage() {
       ]);
       setUser(userData);
       setProgress(progressData || []);
-    } catch (err) {
+    } catch {
       toast.error("Не удалось загрузить данные пользователя");
       setUser(null);
       setProgress([]);
@@ -81,31 +83,47 @@ export default function AdminUserProfilePage() {
     }
   };
 
-  if (loading)
+  if (loading) {
     return (
       <Spinner
         className="flex h-[60vh] justify-center"
         color="secondary"
         size="lg"
+        data-testid="profile-spinner"
       />
     );
-  if (!user)
+  }
+
+  if (!user) {
     return (
-      <div className="text-center py-8 text-danger">Профиль не найден</div>
+      <div
+        className="text-center py-8 text-danger"
+        data-testid="profile-not-found"
+      >
+        Профиль не найден
+      </div>
     );
+  }
 
   return (
-    <div className="space-y-6 max-w-5xl mx-auto">
+    <div
+      className="space-y-6 max-w-5xl mx-auto"
+      data-testid="user-profile-view"
+    >
       <Button
         size="sm"
         variant="bordered"
         className="border-border-subtle text-text-muted"
         onClick={() => router.push("/users")}
+        data-testid="profile-back-button"
       >
         <Icon icon="lucide:arrow-left" /> Назад
       </Button>
 
-      <Card className="bg-surface border border-border-subtle shadow-none rounded-xl">
+      <Card
+        className="bg-surface border border-border-subtle shadow-none rounded-xl"
+        data-testid="user-meta-card"
+      >
         <CardBody className="p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div className="space-y-1">
             <div className="flex items-center gap-2">
@@ -137,7 +155,6 @@ export default function AdminUserProfilePage() {
             {user.roles.map((r) => (
               <Chip
                 key={r}
-                size="sm"
                 className="border border-border-subtle uppercase text-[10px] font-medium"
               >
                 {r}
@@ -157,7 +174,10 @@ export default function AdminUserProfilePage() {
             Администратор может подтверждать блоки вручную
           </p>
         </div>
-        <Table aria-label="Прогресс по блокам">
+        <Table
+          aria-label="Прогресс по блокам"
+          data-testid="student-progress-table"
+        >
           <TableHeader>
             <TableColumn>Блок</TableColumn>
             <TableColumn>Прогресс</TableColumn>
@@ -168,6 +188,7 @@ export default function AdminUserProfilePage() {
             {progress.map((prog) => (
               <TableRow
                 key={prog.block_id}
+                data-testid={`progress-row-${prog.block_id}`}
                 className="border-b border-border-subtle/40 last:border-none"
               >
                 <TableCell className="text-sm font-medium">
@@ -192,6 +213,7 @@ export default function AdminUserProfilePage() {
                       variant="flat"
                       className="text-xs font-medium"
                       onClick={() => handleSuperBuddyApprove(prog.block_id)}
+                      data-testid={`super-approve-${prog.block_id}`}
                     >
                       Подтвердить
                     </Button>
@@ -213,3 +235,5 @@ export default function AdminUserProfilePage() {
     </div>
   );
 }
+
+export default AdminUserProfilePage;

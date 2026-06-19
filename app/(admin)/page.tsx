@@ -1,15 +1,14 @@
-// app/(admin)/page.tsx
-
 "use client";
+
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Spinner } from "@heroui/react";
 
-export default function AdminRootPage() {
+/** Root administrative page handling immediate client-side redirection to the core analytics workspace */
+export function AdminRootPage() {
   const router = useRouter();
 
   useEffect(() => {
-    // Автоматический перенос в рабочее пространство аналитики
     router.replace("/dashboard");
   }, [router]);
 
@@ -24,3 +23,5 @@ export default function AdminRootPage() {
     </div>
   );
 }
+
+export default AdminRootPage;

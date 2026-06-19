@@ -1,5 +1,6 @@
 "use client";
-import { useEffect, useState } from "react";
+
+import { useEffect, useState, ChangeEvent } from "react";
 import { api } from "@/components/api";
 import {
   Table,
@@ -21,6 +22,7 @@ import { Icon } from "@iconify/react";
 import { toast } from "sonner";
 import { RoadmapMaterial, RoadmapBlock } from "@/types";
 
+/** Administrative page for managing learning materials inside roadmap blocks */
 export default function AdminRoadmapMaterialsPage() {
   const [materials, setMaterials] = useState<RoadmapMaterial[]>([]);
   const [blocks, setBlocks] = useState<RoadmapBlock[]>([]);
@@ -44,7 +46,7 @@ export default function AdminRoadmapMaterialsPage() {
       setMaterials(materialsData || []);
       setBlocks(blocksData || []);
     } catch {
-      toast.error("Не удалось загрузить данные");
+      toast.error("Failed to load data");
       setMaterials([]);
       setBlocks([]);
     } finally {
@@ -58,7 +60,7 @@ export default function AdminRoadmapMaterialsPage() {
 
   const handleCreateMaterial = async () => {
     if (!title || !selectedBlockId) {
-      toast.error("Название и блок обязательны!");
+      toast.error("Title and block are required");
       return;
     }
     try {
@@ -73,14 +75,16 @@ export default function AdminRoadmapMaterialsPage() {
         is_active: true,
         sort_order: parseInt(sortOrder) || 1,
       });
-      toast.success("Материал добавлен");
+      toast.success("Material added");
       setTitle("");
       setDescription("");
       setUrl("");
       setSortOrder("1");
       loadData();
-    } catch (err: any) {
-      toast.error(err.message || "Ошибка");
+    } catch (err: unknown) {
+      const message =
+        err instanceof Error ? err.message : "Error creating material";
+      toast.error(message);
     }
   };
 
@@ -89,10 +93,10 @@ export default function AdminRoadmapMaterialsPage() {
       await api.patch(`/api/admin/materials/${id}/status`, {
         is_active: !currentStatus,
       });
-      toast.success("Статус изменён");
+      toast.success("Status changed");
       loadData();
     } catch {
-      toast.error("Ошибка");
+      toast.error("Failed to change status");
     }
   };
 
@@ -112,28 +116,33 @@ export default function AdminRoadmapMaterialsPage() {
   };
 
   if (loading)
-    return <div className="text-center py-8">Загрузка материалов...</div>;
+    return <div className="text-center py-8">Loading materials...</div>;
 
   return (
     <div className="space-y-6 max-w-7xl mx-auto">
       <Card className="bg-surface border border-border-subtle shadow-none rounded-xl">
         <CardBody className="p-5 space-y-4">
           <h3 className="text-sm font-semibold text-brand-purple flex items-center gap-2">
-            <Icon icon="lucide:file-plus-2" /> Новый материал
+            <Icon icon="lucide:file-plus-2" /> New Material
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
             <Input
               size="sm"
-              label="Название"
+              label="Title"
               variant="bordered"
               value={title}
-              onChange={(e) => setTitle(e.target.value)}
+              onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                setTitle(e.target.value)
+              }
+              data-testid="material-title-input"
             />
             <Select
               size="sm"
-              label="Блок"
+              label="Block"
               variant="bordered"
-              onChange={(e) => setSelectedBlockId(e.target.value)}
+              onChange={(e: ChangeEvent<HTMLSelectElement>) =>
+                setSelectedBlockId(e.target.value)
+              }
             >
               {blocks.map((b) => (
                 <SelectItem key={b.id}>{b.title}</SelectItem>
@@ -141,15 +150,17 @@ export default function AdminRoadmapMaterialsPage() {
             </Select>
             <Select
               size="sm"
-              label="Тип"
+              label="Type"
               variant="bordered"
               defaultSelectedKeys={["theory"]}
-              onChange={(e) => setMaterialType(e.target.value as any)}
+              onChange={(e: ChangeEvent<HTMLSelectElement>) =>
+                setMaterialType(e.target.value as any)
+              }
             >
-              <SelectItem key="theory">Теория</SelectItem>
-              <SelectItem key="questions">Вопросы</SelectItem>
-              <SelectItem key="practice">Практика</SelectItem>
-              <SelectItem key="homework">Домашка</SelectItem>
+              <SelectItem key="theory">Theory</SelectItem>
+              <SelectItem key="questions">Questions</SelectItem>
+              <SelectItem key="practice">Practice</SelectItem>
+              <SelectItem key="homework">Homework</SelectItem>
             </Select>
             <Input
               size="sm"
@@ -157,25 +168,34 @@ export default function AdminRoadmapMaterialsPage() {
               variant="bordered"
               placeholder="https://..."
               value={url}
-              onChange={(e) => setUrl(e.target.value)}
+              onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                setUrl(e.target.value)
+              }
+              data-testid="material-url-input"
             />
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3 items-center pt-2">
             <Input
               size="sm"
               type="number"
-              label="Порядок"
+              label="Order"
               variant="bordered"
               value={sortOrder}
-              onChange={(e) => setSortOrder(e.target.value)}
+              onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                setSortOrder(e.target.value)
+              }
+              data-testid="material-sort-input"
             />
             <div className="flex items-center gap-2 bg-canvas/50 p-2 rounded-lg border border-border-subtle justify-between px-4">
-              <span className="text-sm text-text-muted">Обязательный:</span>
+              <span className="text-sm text-text-muted">Required:</span>
               <Switch
                 size="sm"
                 color="danger"
                 isSelected={isRequired}
-                onChange={(e) => setIsRequired(e.target.checked)}
+                onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                  setIsRequired(e.target.checked)
+                }
+                data-testid="material-required-switch"
               />
             </div>
             <div className="flex justify-end">
@@ -184,22 +204,23 @@ export default function AdminRoadmapMaterialsPage() {
                 color="secondary"
                 className="font-medium text-xs"
                 onClick={handleCreateMaterial}
+                data-testid="material-submit-button"
               >
-                Добавить материал
+                Add Material
               </Button>
             </div>
           </div>
         </CardBody>
       </Card>
 
-      <Table aria-label="Материалы">
+      <Table aria-label="Materials" data-testid="materials-table">
         <TableHeader>
-          <TableColumn>Блок</TableColumn>
-          <TableColumn>Порядок</TableColumn>
-          <TableColumn>Название</TableColumn>
-          <TableColumn>Тип</TableColumn>
-          <TableColumn>Обязательный</TableColumn>
-          <TableColumn align="end">Активен</TableColumn>
+          <TableColumn>Block</TableColumn>
+          <TableColumn>Order</TableColumn>
+          <TableColumn>Title</TableColumn>
+          <TableColumn>Type</TableColumn>
+          <TableColumn>Required</TableColumn>
+          <TableColumn align="end">Active</TableColumn>
         </TableHeader>
         <TableBody>
           {materials.map((mat) => {
@@ -208,6 +229,7 @@ export default function AdminRoadmapMaterialsPage() {
               <TableRow
                 key={mat.id}
                 className="border-b border-border-subtle/40 last:border-none"
+                data-testid={`material-row-${mat.id}`}
               >
                 <TableCell className="text-sm text-brand-purple font-medium">
                   {parentBlock ? parentBlock.title : "—"}
@@ -245,7 +267,7 @@ export default function AdminRoadmapMaterialsPage() {
                     color={mat.is_required ? "danger" : "default"}
                     className="text-[10px] font-medium"
                   >
-                    {mat.is_required ? "Да" : "Нет"}
+                    {mat.is_required ? "Yes" : "No"}
                   </Chip>
                 </TableCell>
                 <TableCell className="text-right">
@@ -254,6 +276,7 @@ export default function AdminRoadmapMaterialsPage() {
                     color="secondary"
                     isSelected={mat.is_active}
                     onChange={() => handleToggleActive(mat.id, mat.is_active)}
+                    data-testid={`material-status-switch-${mat.id}`}
                   />
                 </TableCell>
               </TableRow>

@@ -1,4 +1,5 @@
 "use client";
+
 import { useEffect, useState } from "react";
 import { api } from "@/components/api";
 import {
@@ -11,11 +12,11 @@ import {
   Button,
   Chip,
 } from "@heroui/react";
-import { Icon } from "@iconify/react";
 import { toast } from "sonner";
 import { OneOnOneRequest } from "@/types";
 
-export default function AdminOneOnOnePage() {
+/** Administrative view managing and auditing student 1-on-1 consultation requests and bonus balance operations */
+export function AdminOneOnOnePage() {
   const [requests, setRequests] = useState<OneOnOneRequest[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -50,8 +51,12 @@ export default function AdminOneOnOnePage() {
         `Заявка ${action === "approve" ? "одобрена" : action === "reject" ? "отклонена" : "завершена"}`,
       );
       loadRequests();
-    } catch (err: any) {
-      toast.error(err.message || "Ошибка");
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        toast.error(err.message);
+      } else {
+        toast.error("Ошибка при обработке заявки");
+      }
     }
   };
 
@@ -70,12 +75,13 @@ export default function AdminOneOnOnePage() {
     }
   };
 
-  if (loading)
+  if (loading) {
     return <div className="text-center py-8">Загрузка заявок...</div>;
+  }
 
   return (
     <div className="space-y-6 max-w-6xl mx-auto">
-      <Table aria-label="Заявки">
+      <Table aria-label="Заявки" data-testid="one-on-one-table">
         <TableHeader>
           <TableColumn>Студент</TableColumn>
           <TableColumn>Бонусы</TableColumn>
@@ -87,6 +93,7 @@ export default function AdminOneOnOnePage() {
           {requests.map((req) => (
             <TableRow
               key={req.id}
+              data-testid={`request-row-${req.id}`}
               className="border-b border-border-subtle/40 last:border-none"
             >
               <TableCell className="text-sm font-medium">
@@ -133,6 +140,7 @@ export default function AdminOneOnOnePage() {
                       onClick={() =>
                         handleProcess(req.id, "approve", req.student_bonus)
                       }
+                      data-testid={`approve-button-${req.id}`}
                     >
                       Approve
                     </Button>
@@ -144,6 +152,7 @@ export default function AdminOneOnOnePage() {
                       onClick={() =>
                         handleProcess(req.id, "reject", req.student_bonus)
                       }
+                      data-testid={`reject-button-${req.id}`}
                     >
                       Reject
                     </Button>
@@ -158,6 +167,7 @@ export default function AdminOneOnOnePage() {
                     onClick={() =>
                       handleProcess(req.id, "complete", req.student_bonus)
                     }
+                    data-testid={`complete-button-${req.id}`}
                   >
                     Complete
                   </Button>
@@ -175,3 +185,5 @@ export default function AdminOneOnOnePage() {
     </div>
   );
 }
+
+export default AdminOneOnOnePage;

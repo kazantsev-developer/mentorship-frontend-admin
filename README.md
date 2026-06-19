@@ -12,7 +12,7 @@ Administrative dashboard for the Go mentorship platform. Built with React 18, Vi
 
 1. Clone the repository and navigate to the project root directory:
    ```bash
-   git clone https://github.com
+   git clone https://github.com/kazantsev-developer/mentorship-frontend-admin.git
    cd mentorship-frontend-admin
    ```
 
